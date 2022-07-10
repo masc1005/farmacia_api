@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node --files --transpile-only src/index.ts",
-    "start": "nodemon build/index.ts",
+    "start": "nodemon build/index.js",
     "build": "tsc",
     "generate": "prisma generate"
   },
