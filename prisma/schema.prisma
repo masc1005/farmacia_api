@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  password String
+  email    String @unique
+
+
+  @@map("users")
+}
+
+model Pharmacy {
+
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  address String
+  phone   String
+  cnpj    String @unique
+  email   String @unique
+
+  medicines Meds[]
+
+  @@map("pharmacies")
+}
+
+model Virus {
+
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  scientific_name String @unique
+  common_name     String
+  description     String
+
+  meds    Meds   @relation(fields: [meds_id], references: [id])
+  meds_id String
+
+  patient Patient[]
+
+  @@map("virus")
+}
+
+model Patient {
+
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String  @unique
+  password String
+  status   Boolean @default(true)
+
+  virus_id String
+  virus    Virus  @relation(fields: [virus_id], references: [id])
+
+  meds_id String
+  meds    Meds   @relation(fields: [meds_id], references: [id])
+
+  @@map("patients")
+}
+
+model Meds {
+
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  name            String @unique
+  quantity        Int
+  price           Float
+  description     String
+  active_compound String
+
+  pharmacy      Pharmacy @relation(fields: [pharmacy_cnpj], references: [cnpj])
+  pharmacy_cnpj String
+
+  patient Patient[]
+  virus   Virus[]
+
+  @@map("meds")
+}
